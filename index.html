@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireVista - AI Mock Interview Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        },
+                        accent: {
+                            yellow: '#fbbf24',
+                            pink: '#ec4899'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #ec4899 50%, #fbbf24 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .recording-pulse {
+            animation: pulse 1s ease-in-out infinite;
+        }
+        #videoPreview {
+            transform: scaleX(-1);
+        }
+        .achievement-badge {
+            background: linear-gradient(45deg, #fbbf24, #ec4899);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(251, 191, 36, 0.5); }
+            to { box-shadow: 0 0 20px rgba(236, 72, 153, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-pink-50 min-h-screen">
+    <!-- Navigation -->
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b-4 border-gradient-to-r from-blue-500 to-pink-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
+                            🎯 HireVista
+                        </h1>
+                    </div>
+                    <div id="navLinks" class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="#" onclick="app.showDashboard()" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Dashboard</a>
+                        <a href="#" onclick="app.showResourceHub()" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Resources</a>
+                        <a href="#" onclick="app.showAnalytics()" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Analytics</a>
+                        <a href="#" onclick="app.showPricing()" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">Pricing</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Profile Dropdown -->
+                    <div id="profileDropdown" class="relative hidden">
+                        <button id="profileBtn" class="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg">
+                            <div id="userAvatar" class="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                                JD
+                            </div>
+                            <span id="userDisplayName" class="text-sm font-medium">John Doe</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="profileMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 hidden">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <div class="flex items-center space-x-3">
+                                    <div id="menuAvatar" class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                        JD
+                                    </div>
+                                    <div>
+                                        <div id="menuUserName" class="font-medium text-gray-900">John Doe</div>
+                                        <div id="menuUserEmail" class="text-sm text-gray-500">john.doe@gmail.com</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 py-2">
+                                <div class="text-xs text-gray-500 mb-1">User ID</div>
+                                <div id="menuUserId" class="text-sm font-mono text-gray-700">user_123456</div>
+                            </div>
+                            <div class="px-4 py-2">
+                                <div class="text-xs text-gray-500 mb-1">Current Streak</div>
+                                <div id="menuUserStreak" class="text-sm text-gray-700">🔥 0 days</div>
+                            </div>
+                            <div class="px-4 py-2">
+                                <div class="text-xs text-gray-500 mb-1">Total Interviews</div>
+                                <div id="menuTotalInterviews" class="text-sm text-gray-700">0 completed</div>
+                            </div>
+                            <div class="border-t border-gray-100 mt-2 pt-2">
+                                <button id="signOutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Auth Buttons -->
+                    <div id="authButtons" class="flex space-x-3">
+                        <button id="signInBtn" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg">
+                            Sign In
+                        </button>
+                        <button id="signUpBtn" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 shadow-lg">
+                            Sign Up
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Landing Page -->
+        <div id="landingPage" class="min-h-screen">
+            <!-- Hero Section -->
+            <div class="relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"></div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+                    <div class="text-center">
+                        <h1 class="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
+                            Master Your Next 
+                            <span class="bg-gradient-to-r from-blue-600 via-pink-600 to-yellow-500 bg-clip-text text-transparent">
+                                Interview
+                            </span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
+                            Practice with AI-powered mock interviews, get real-time feedback, and land your dream job with confidence. Join thousands of successful candidates.
+                        </p>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                            <button id="heroSignUpBtn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                                🚀 Get Started Free
+                            </button>
+                            <button id="heroSignInBtn" class="bg-white text-gray-700 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-50 transition-all duration-200 shadow-lg border border-gray-200">
+                                Sign In
+                            </button>
+                            <button id="googleSignInBtn" class="flex items-center space-x-3 bg-white text-gray-700 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-50 transition-all duration-200 shadow-lg border border-gray-200">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                                <span>Continue with Google</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4">Why Choose HireVista?</h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Everything you need to ace your next interview</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="text-5xl mb-4">🤖</div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">AI-Powered Analysis</h3>
+                            <p class="text-gray-600">Get intelligent feedback on your answers with advanced AI technology</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="text-5xl mb-4">📹</div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Video Practice</h3>
+                            <p class="text-gray-600">Practice with real camera monitoring and recording capabilities</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="text-5xl mb-4">📊</div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Detailed Analytics</h3>
+                            <p class="text-gray-600">Track your progress with comprehensive performance analytics</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                            <div class="text-5xl mb-4">🏆</div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-3">Achievements</h3>
+                            <p class="text-gray-600">Stay motivated with gamified learning and achievement system</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-white">
+                        <div>
+                            <div class="text-4xl font-bold mb-2">10,000+</div>
+                            <div class="text-xl opacity-90">Successful Interviews</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold mb-2">95%</div>
+                            <div class="text-xl opacity-90">Success Rate</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-bold mb-2">50+</div>
+                            <div class="text-xl opacity-90">Job Roles Covered</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Interviews</p>
+                            <p id="totalInterviews" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                        <div class="text-3xl">📝</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Average Score</p>
+                            <p id="averageScore" class="text-2xl font-bold text-blue-600">0%</p>
+                        </div>
+                        <div class="text-3xl">📊</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Current Streak</p>
+                            <p id="currentStreak" class="text-2xl font-bold text-yellow-600">0 days</p>
+                        </div>
+                        <div class="text-3xl">🔥</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Achievements</p>
+                            <p id="achievementCount" class="text-2xl font-bold text-pink-600">0</p>
+                        </div>
+                        <div class="text-3xl">🏆</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex flex-wrap gap-4 mb-8">
+                <button id="newInterviewBtn" class="bg-gradient-to-r from-blue-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
+                    🎯 Start New Interview
+                </button>
+                <button id="practiceBtn" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 shadow-lg">
+                    ⚡ Quick Practice
+                </button>
+                <button id="resourcesBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
+                    📚 Resources
+                </button>
+            </div>
+
+            <!-- New Interview Form -->
+            <div id="newInterviewForm" class="hidden bg-white rounded-xl p-6 card-shadow mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">Create New Interview</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Job Role</label>
+                        <select id="jobRole" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select a role...</option>
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="Backend Developer">Backend Developer</option>
+                            <option value="Full Stack Developer">Full Stack Developer</option>
+                            <option value="Data Scientist">Data Scientist</option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="Product Manager">Product Manager</option>
+                            <option value="UX/UI Designer">UX/UI Designer</option>
+                            <option value="DevOps Engineer">DevOps Engineer</option>
+                            <option value="QA Engineer">QA Engineer</option>
+                            <option value="Business Analyst">Business Analyst</option>
+                            <option value="Marketing Manager">Marketing Manager</option>
+                            <option value="Sales Representative">Sales Representative</option>
+                            <option value="Project Manager">Project Manager</option>
+                            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+                            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                            <option value="Cloud Architect">Cloud Architect</option>
+                            <option value="Mobile Developer">Mobile Developer</option>
+                            <option value="Database Administrator">Database Administrator</option>
+                            <option value="System Administrator">System Administrator</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+                        <select id="experienceLevel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="entry">Entry Level (0-2 years)</option>
+                            <option value="mid">Mid Level (3-5 years)</option>
+                            <option value="senior">Senior Level (5+ years)</option>
+                            <option value="lead">Lead/Principal (8+ years)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Company Type</label>
+                        <select id="companyType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="general">General</option>
+                            <option value="faang">FAANG/Big Tech</option>
+                            <option value="startup">Startup</option>
+                            <option value="enterprise">Enterprise</option>
+                            <option value="consulting">Consulting</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Number of Questions</label>
+                        <select id="questionCount" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="5">5 Questions (15 min)</option>
+                            <option value="10">10 Questions (30 min)</option>
+                            <option value="15">15 Questions (45 min)</option>
+                            <option value="20">20 Questions (60 min)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
+                        <select id="difficultyLevel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Answer Type</label>
+                        <select id="answerType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="text">Text Answers</option>
+                            <option value="voice">Voice Recording</option>
+                            <option value="video">Video Recording</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex space-x-4">
+                    <button id="startInterviewBtn" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200">
+                        Start Interview
+                    </button>
+                    <button id="cancelInterviewBtn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-all duration-200">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Achievements -->
+            <div id="achievementsSection" class="bg-white rounded-xl p-6 card-shadow mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">Recent Achievements</h3>
+                <div id="achievementsList" class="flex flex-wrap gap-3">
+                    <div class="text-center py-4 text-gray-500">
+                        <p>Complete your first interview to unlock achievements!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Previous Interviews -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">Interview History</h3>
+                    <div class="flex space-x-2">
+                        <select id="filterRole" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                            <option value="">All Roles</option>
+                        </select>
+                        <select id="filterScore" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                            <option value="">All Scores</option>
+                            <option value="90">90%+</option>
+                            <option value="80">80%+</option>
+                            <option value="70">70%+</option>
+                            <option value="60">60%+</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="previousInterviews" class="space-y-4">
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">📝</div>
+                        <p>No interviews yet. Create your first interview to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interview Setup Page -->
+        <div id="interviewSetup" class="hidden">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Interview Setup</h2>
+                
+                <!-- Camera & Microphone Test -->
+                <div class="bg-white rounded-xl p-6 card-shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Camera & Microphone Check</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Camera Preview</h4>
+                            <div class="relative bg-gray-900 rounded-lg overflow-hidden" style="aspect-ratio: 16/9;">
+                                <video id="videoPreview" class="w-full h-full object-cover" autoplay muted></video>
+                                <div id="cameraStatus" class="absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-red-500 text-white">
+                                    Camera Off
+                                </div>
+                            </div>
+                            <button id="toggleCamera" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                                Enable Camera
+                            </button>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Microphone Status</h4>
+                            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-700">Microphone is ready for recording</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Your microphone will be automatically enabled during voice/video interviews</p>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <p class="mb-2">✅ Camera: <span id="cameraCheck">Not tested</span></p>
+                                <p>✅ Microphone: <span class="text-green-600">Ready</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interview Instructions -->
+                <div class="bg-white rounded-xl p-6 card-shadow mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-900">Interview Instructions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">What to Expect</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• <span id="setupQuestionCount">5</span> questions tailored to your role</li>
+                                <li>• 2 minutes per question</li>
+                                <li>• Real-time monitoring and feedback</li>
+                                <li>• Detailed analysis after completion</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Tips for Success</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Speak clearly and maintain eye contact</li>
+                                <li>• Use specific examples in your answers</li>
+                                <li>• Stay calm and take your time</li>
+                                <li>• Practice the STAR method (Situation, Task, Action, Result)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button id="proceedToInterview" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200 shadow-lg disabled:opacity-50" disabled>
+                        Start Interview
+                    </button>
+                    <p class="text-sm text-gray-500 mt-2">Complete camera and microphone setup to continue</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interview Page -->
+        <div id="interviewPage" class="hidden">
+            <div class="max-w-6xl mx-auto">
+                <!-- Progress Bar -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Progress</span>
+                        <span id="questionProgress" class="text-sm font-medium text-gray-700">1 of 5</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-pink-500 h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Question Section -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl p-6 card-shadow mb-6">
+                            <div class="flex justify-between items-start mb-6">
+                                <h3 class="text-2xl font-semibold text-gray-900">Question <span id="currentQuestionNum">1</span></h3>
+                                <div class="text-right">
+                                    <div id="timer" class="text-3xl font-bold text-blue-600">02:00</div>
+                                    <div class="text-sm text-gray-500">Time Remaining</div>
+                                </div>
+                            </div>
+                            <div id="questionText" class="text-lg text-gray-700 mb-8 leading-relaxed">
+                                Loading question...
+                            </div>
+
+                            <!-- Text Answer -->
+                            <div id="textAnswerSection" class="hidden">
+                                <textarea id="textAnswer" placeholder="Type your answer here..." 
+                                          class="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Word count: <span id="wordCount">0</span> words
+                                </div>
+                            </div>
+
+                            <!-- Voice Answer -->
+                            <div id="voiceAnswerSection" class="hidden">
+                                <div class="text-center">
+                                    <button id="recordBtn" class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-8 py-4 rounded-full hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
+                                        <span id="recordBtnText">🎤 Start Recording</span>
+                                    </button>
+                                    <div id="recordingStatus" class="mt-4 text-sm text-gray-600 hidden">
+                                        <div class="flex items-center justify-center">
+                                            <div class="w-3 h-3 bg-red-500 rounded-full recording-pulse mr-2"></div>
+                                            Recording... <span id="recordingTime">00:00</span>
+                                        </div>
+                                    </div>
+                                    <div id="recordingComplete" class="mt-4 text-sm text-green-600 hidden">
+                                        ✅ Recording completed successfully!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Video Answer -->
+                            <div id="videoAnswerSection" class="hidden">
+                                <div class="text-center">
+                                    <div class="relative bg-gray-900 rounded-lg overflow-hidden mb-4" style="aspect-ratio: 16/9; max-width: 400px; margin: 0 auto;">
+                                        <video id="interviewVideo" class="w-full h-full object-cover" autoplay muted></video>
+                                        <div id="videoRecordingStatus" class="absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-red-500 text-white hidden">
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 bg-white rounded-full recording-pulse mr-1"></div>
+                                                REC
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="videoRecordBtn" class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-8 py-4 rounded-full hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
+                                        <span id="videoRecordBtnText">📹 Start Video Recording</span>
+                                    </button>
+                                    <div id="videoRecordingComplete" class="mt-4 text-sm text-green-600 hidden">
+                                        ✅ Video recording completed successfully!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between mt-8">
+                                <button id="prevQuestionBtn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-all duration-200 disabled:opacity-50" disabled>
+                                    Previous
+                                </button>
+                                <button id="nextQuestionBtn" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
+                                    Next Question
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monitoring Panel -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl p-6 card-shadow sticky top-6">
+                            <h4 class="font-semibold text-gray-900 mb-4">Interview Monitoring</h4>
+                            
+                            <!-- Live Feedback -->
+                            <div class="mb-6">
+                                <h5 class="text-sm font-medium text-gray-700 mb-2">Live Analysis</h5>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Speaking Pace:</span>
+                                        <span id="speakingPace" class="text-green-600">Good</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Eye Contact:</span>
+                                        <span id="eyeContact" class="text-yellow-600">Moderate</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Confidence:</span>
+                                        <span id="confidenceLevel" class="text-blue-600">High</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Tips -->
+                            <div class="mb-6">
+                                <h5 class="text-sm font-medium text-gray-700 mb-2">Quick Tips</h5>
+                                <div id="liveTips" class="text-sm text-gray-600">
+                                    <p>💡 Use specific examples to strengthen your answer</p>
+                                </div>
+                            </div>
+
+                            <!-- Interview Stats -->
+                            <div>
+                                <h5 class="text-sm font-medium text-gray-700 mb-2">Session Stats</h5>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Questions Completed:</span>
+                                        <span id="questionsCompleted">0/5</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Average Response Time:</span>
+                                        <span id="avgResponseTime">0s</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Current Score:</span>
+                                        <span id="currentScore" class="font-medium text-blue-600">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div id="resultsPage" class="hidden">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Interview Complete! 🎉</h2>
+                    <div class="bg-white rounded-xl p-6 card-shadow inline-block">
+                        <div class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                            <span id="overallScore">85</span>%
+                        </div>
+                        <div class="text-gray-600">Overall Score</div>
+                        <div id="scoreImprovement" class="text-sm text-green-600 mt-1 hidden">
+                            +5% from last interview!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-4 card-shadow text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="contentScore">0</div>
+                        <div class="text-sm text-gray-600">Content Quality</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 card-shadow text-center">
+                        <div class="text-2xl font-bold text-green-600" id="clarityScore">0</div>
+                        <div class="text-sm text-gray-600">Clarity</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 card-shadow text-center">
+                        <div class="text-2xl font-bold text-purple-600" id="confidenceScore">0</div>
+                        <div class="text-sm text-gray-600">Confidence</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 card-shadow text-center">
+                        <div class="text-2xl font-bold text-pink-600" id="structureScore">0</div>
+                        <div class="text-sm text-gray-600">Structure</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-center space-x-4 mb-8">
+                    <button id="downloadPDF" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
+                        📄 Download PDF
+                    </button>
+                    <button id="shareResults" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-green-600 hover:to-blue-600 transition-all duration-200">
+                        📤 Share Results
+                    </button>
+                    <button id="retakeInterview" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-2 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all duration-200">
+                        🔄 Retake Interview
+                    </button>
+                </div>
+
+                <!-- Detailed Results -->
+                <div id="detailedResults" class="space-y-6">
+                    <!-- Results will be populated here -->
+                </div>
+
+                <div class="text-center mt-8">
+                    <button id="backToDashboardBtn" class="bg-gradient-to-r from-blue-500 to-pink-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-pink-600 transition-all duration-200 shadow-lg">
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resource Hub -->
+        <div id="resourceHub" class="hidden">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Resource Hub</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Company Question Banks -->
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h3 class="text-xl font-semibold mb-4">Company Question Banks</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <span class="font-medium">Google</span>
+                                <span class="text-sm text-gray-600">150+ questions</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <span class="font-medium">Amazon</span>
+                                <span class="text-sm text-gray-600">200+ questions</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <span class="font-medium">Microsoft</span>
+                                <span class="text-sm text-gray-600">120+ questions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interview Guides -->
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h3 class="text-xl font-semibold mb-4">Interview Guides</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-blue-50 rounded-lg">
+                                <h4 class="font-medium text-blue-900">STAR Method Guide</h4>
+                                <p class="text-sm text-blue-700">Master behavioral questions</p>
+                            </div>
+                            <div class="p-3 bg-green-50 rounded-lg">
+                                <h4 class="font-medium text-green-900">Technical Interview Prep</h4>
+                                <p class="text-sm text-green-700">Coding & system design</p>
+                            </div>
+                            <div class="p-3 bg-purple-50 rounded-lg">
+                                <h4 class="font-medium text-purple-900">Salary Negotiation</h4>
+                                <p class="text-sm text-purple-700">Get the offer you deserve</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h3 class="text-xl font-semibold mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-3">
+                            <details class="group">
+                                <summary class="cursor-pointer font-medium text-gray-900 group-open:text-blue-600">
+                                    How accurate is the AI feedback?
+                                </summary>
+                                <p class="mt-2 text-sm text-gray-600">Our AI analyzes content, structure, and delivery to provide feedback comparable to human recruiters.</p>
+                            </details>
+                            <details class="group">
+                                <summary class="cursor-pointer font-medium text-gray-900 group-open:text-blue-600">
+                                    Can I practice specific company questions?
+                                </summary>
+                                <p class="mt-2 text-sm text-gray-600">Yes! Our Pro plan includes company-specific question banks and interview formats.</p>
+                            </details>
+                            <details class="group">
+                                <summary class="cursor-pointer font-medium text-gray-900 group-open:text-blue-600">
+                                    Is my data secure?
+                                </summary>
+                                <p class="mt-2 text-sm text-gray-600">Absolutely. All recordings and data are encrypted and never shared with third parties.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div id="analyticsPage" class="hidden">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Performance Analytics</h2>
+                
+                <!-- Analytics Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Best Score</p>
+                                <p id="analyticsBestScore" class="text-2xl font-bold text-green-600">0%</p>
+                            </div>
+                            <div class="text-3xl">🏆</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Improvement</p>
+                                <p id="analyticsImprovement" class="text-2xl font-bold text-blue-600">+0%</p>
+                            </div>
+                            <div class="text-3xl">📈</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Favorite Role</p>
+                                <p id="analyticsFavoriteRole" class="text-lg font-bold text-purple-600">None</p>
+                            </div>
+                            <div class="text-3xl">💼</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">This Month</p>
+                                <p id="analyticsThisMonth" class="text-2xl font-bold text-pink-600">0</p>
+                            </div>
+                            <div class="text-3xl">📅</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h3 class="text-lg font-semibold mb-4">Score Progression</h3>
+                        <div id="scoreProgressionChart" class="h-64">
+                            <!-- Chart will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h3 class="text-lg font-semibold mb-4">Skills Breakdown</h3>
+                        <div id="skillsBreakdownChart" class="h-64">
+                            <!-- Chart will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Performance -->
+                <div class="bg-white rounded-xl p-6 card-shadow mb-8">
+                    <h3 class="text-lg font-semibold mb-4">Performance by Role</h3>
+                    <div id="rolePerformanceChart" class="h-64">
+                        <!-- Chart will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+                    <div id="recentActivityList" class="space-y-3">
+                        <!-- Activity items will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Page -->
+        <div id="pricingPage" class="hidden">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Choose Your Plan</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Free Plan -->
+                    <div class="bg-white rounded-xl p-8 card-shadow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Free</h3>
+                        <div class="text-4xl font-bold text-blue-600 mb-6">$0<span class="text-lg text-gray-500">/month</span></div>
+                        <ul class="text-left space-y-3 mb-8">
+                            <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> 5 interviews per month</li>
+                            <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Basic AI feedback</li>
+                            <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> General questions only</li>
+                            <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Text answers only</li>
+                        </ul>
+                        <button class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Get Started Free
+                        </button>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="bg-gradient-to-br from-blue-500 to-pink-500 rounded-xl p-8 text-white relative">
+                        <div class="absolute top-4 right-4 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-bold">
+                            POPULAR
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Pro</h3>
+                        <div class="text-4xl font-bold mb-6">$19<span class="text-lg opacity-75">/month</span></div>
+                        <ul class="text-left space-y-3 mb-8">
+                            <li class="flex items-center"><span class="text-yellow-400 mr-2">✓</span> Unlimited interviews</li>
+                            <li class="flex items-center"><span class="text-yellow-400 mr-2">✓</span> Advanced AI analysis</li>
+                            <li class="flex items-center"><span class="text-yellow-400 mr-2">✓</span> Company-specific questions</li>
+                            <li class="flex items-center"><span class="text-yellow-400 mr-2">✓</span> Video & voice recording</li>
+                            <li class="flex items-center"><span class="text-yellow-400 mr-2">✓</span> Detailed analytics</li>
+                            <li class="flex items-center"><span class="text-yellow-400 mr-2">✓</span> PDF reports</li>
+                        </ul>
+                        <button class="w-full bg-white text-blue-600 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold">
+                            Upgrade to Pro
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sign In Modal -->
+    <div id="signInModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
+                <p class="text-gray-600">Sign in to continue your interview journey</p>
+            </div>
+            
+            <form id="signInForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="signInEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="signInPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+                
+                <button id="googleSignInModal" class="mt-4 w-full flex items-center justify-center space-x-3 bg-white border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <button id="switchToSignUp" class="text-blue-600 hover:text-blue-700 font-medium">Sign up</button>
+                </p>
+            </div>
+            
+            <button id="closeSignInModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Join HireVista</h2>
+                <p class="text-gray-600">Create your account and start practicing</p>
+            </div>
+            
+            <form id="signUpForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input type="text" id="signUpName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your full name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" id="signUpUsername" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Choose a username">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="signUpEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="signUpPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Create a password">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-200">
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+                
+                <button id="googleSignUpModal" class="mt-4 w-full flex items-center justify-center space-x-3 bg-white border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Already have an account? 
+                    <button id="switchToSignIn" class="text-blue-600 hover:text-blue-700 font-medium">Sign in</button>
+                </p>
+            </div>
+            
+            <button id="closeSignUpModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Mock Authentication with user persistence
+        class MockAuth {
+            constructor() {
+                this.currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+                this.users = JSON.parse(localStorage.getItem('mockUsers') || '{}');
+            }
+
+            signUp(name, username, email, password) {
+                // Check if user already exists
+                const existingUser = Object.values(this.users).find(user => user.email === email || user.username === username);
+                if (existingUser) {
+                    throw new Error('User with this email or username already exists');
+                }
+
+                const userId = 'user_' + Date.now();
+                const userData = {
+                    id: userId,
+                    name: name,
+                    username: username,
+                    email: email,
+                    password: password, // In real app, this would be hashed
+                    interviews: [],
+                    streak: 0,
+                    achievements: [],
+                    joinedAt: new Date().toISOString()
+                };
+                
+                this.currentUser = userData;
+                this.users[userId] = userData;
+                this.saveData();
+                return userData;
+            }
+
+            signIn(email, password) {
+                const user = Object.values(this.users).find(user => user.email === email);
+                if (!user || user.password !== password) {
+                    throw new Error('Invalid email or password');
+                }
+                
+                this.currentUser = user;
+                this.saveData();
+                return user;
+            }
+
+            signInWithGoogle() {
+                // Mock Google sign in
+                const userId = 'google_' + Date.now();
+                const userData = {
+                    id: userId,
+                    name: 'John Doe',
+                    username: 'johndoe' + Math.floor(Math.random() * 1000),
+                    email: 'john.doe@gmail.com',
+                    provider: 'google',
+                    interviews: [],
+                    streak: 0,
+                    achievements: [],
+                    joinedAt: new Date().toISOString()
+                };
+                
+                this.currentUser = userData;
+                this.users[userId] = userData;
+                this.saveData();
+                return userData;
+            }
+
+            signOut() {
+                this.currentUser = null;
+                localStorage.removeItem('currentUser');
+            }
+
+            getCurrentUser() {
+                return this.currentUser;
+            }
+
+            saveData() {
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+                localStorage.setItem('mockUsers', JSON.stringify(this.users));
+            }
+
+            saveUserInterview(interview) {
+                if (this.currentUser) {
+                    this.currentUser.interviews.push(interview);
+                    this.users[this.currentUser.id] = this.currentUser;
+                    this.updateStreak();
+                    this.checkAchievements();
+                    this.saveData();
+                }
+            }
+
+            updateStreak() {
+                const today = new Date().toDateString();
+                const lastInterview = this.currentUser.interviews[this.currentUser.interviews.length - 1];
+                const lastInterviewDate = new Date(lastInterview.completedAt).toDateString();
+                
+                if (lastInterviewDate === today) {
+                    this.currentUser.streak = (this.currentUser.streak || 0) + 1;
+                }
+            }
+
+            checkAchievements() {
+                const achievements = [];
+                const interviewCount = this.currentUser.interviews.length;
+                const avgScore = this.currentUser.interviews.reduce((sum, i) => sum + i.overallScore, 0) / interviewCount;
+
+                if (interviewCount === 1) achievements.push({ id: 'first_interview', name: 'First Steps', description: 'Completed your first interview' });
+                if (interviewCount === 5) achievements.push({ id: 'five_interviews', name: 'Getting Started', description: 'Completed 5 interviews' });
+                if (interviewCount === 10) achievements.push({ id: 'ten_interviews', name: 'Dedicated Learner', description: 'Completed 10 interviews' });
+                if (avgScore >= 90) achievements.push({ id: 'high_performer', name: 'High Performer', description: 'Achieved 90%+ average score' });
+                if (this.currentUser.streak >= 7) achievements.push({ id: 'week_streak', name: 'Week Warrior', description: '7-day practice streak' });
+
+                achievements.forEach(achievement => {
+                    if (!this.currentUser.achievements.find(a => a.id === achievement.id)) {
+                        this.currentUser.achievements.push(achievement);
+                    }
+                });
+            }
+        }
+
+        // Enhanced AI service with smart analysis
+        class SmartAI {
+            static generateQuestions(jobRole, experienceLevel, count, companyType, difficulty) {
+                const questionBank = {
+                    'Software Engineer': [
+                        "Tell me about a challenging bug you've encountered and how you solved it.",
+                        "How do you approach code reviews and ensure code quality?",
+                        "Describe your experience with version control and collaboration.",
+                        "Walk me through your process for debugging a performance issue.",
+                        "How do you stay updated with new technologies and frameworks?",
+                        "Describe a time when you had to refactor legacy code.",
+                        "How do you handle technical debt in your projects?",
+                        "Explain your approach to writing unit tests.",
+                        "Describe a system design challenge you've worked on.",
+                        "How do you ensure your code is maintainable and scalable?"
+                    ],
+                    'Data Scientist': [
+                        "Walk me through your approach to a data science project from start to finish.",
+                        "How do you handle missing or dirty data in your datasets?",
+                        "Describe a machine learning model you've built and deployed.",
+                        "How do you validate and evaluate your models?",
+                        "Explain a time when you had to communicate complex findings to non-technical stakeholders.",
+                        "How do you approach feature engineering and selection?",
+                        "Describe your experience with A/B testing and experimental design.",
+                        "How do you handle bias in your datasets and models?",
+                        "Walk me through your process for model selection.",
+                        "Describe a time when your analysis led to a business decision."
+                    ],
+                    'Product Manager': [
+                        "How do you prioritize features in a product roadmap?",
+                        "Describe a time when you had to make a difficult product decision.",
+                        "How do you gather and analyze user feedback?",
+                        "Walk me through your process for defining product requirements.",
+                        "How do you work with engineering teams to deliver products?",
+                        "Describe a product launch you've managed from start to finish.",
+                        "How do you measure product success and KPIs?",
+                        "Tell me about a time when you had to pivot a product strategy.",
+                        "How do you conduct competitive analysis?",
+                        "Describe your approach to user research and validation."
+                    ]
+                };
+
+                const generalQuestions = [
+                    "Tell me about yourself and your background.",
+                    "Why are you interested in this role?",
+                    "What are your greatest strengths?",
+                    "Describe a challenging situation you've overcome.",
+                    "Where do you see yourself in 5 years?",
+                    "Why are you looking to leave your current position?",
+                    "How do you handle stress and pressure?",
+                    "Describe a time when you worked in a team.",
+                    "What motivates you in your work?",
+                    "Do you have any questions for us?"
+                ];
+
+                const roleQuestions = questionBank[jobRole] || generalQuestions;
+                const allQuestions = [...roleQuestions, ...generalQuestions];
+                
+                return allQuestions.slice(0, parseInt(count)).map((q, index) => ({
+                    id: index + 1,
+                    question: q,
+                    timeLimit: 120,
+                    category: index < roleQuestions.length ? 'role-specific' : 'general'
+                }));
+            }
+
+            static analyzeAnswer(question, answer, jobRole) {
+                if (!answer || answer.trim().length === 0) {
+                    return {
+                        score: 0,
+                        strengths: [],
+                        weaknesses: ['No answer provided'],
+                        suggestions: ['Please provide an answer to the question'],
+                        idealAnswer: 'A complete answer addressing the question with specific examples.',
+                        wordCount: 0,
+                        relevanceScore: 0,
+                        contentScore: 0,
+                        clarityScore: 0,
+                        structureScore: 0
+                    };
+                }
+
+                const words = answer.trim().split(/\s+/);
+                const wordCount = words.length;
+                const answerLower = answer.toLowerCase();
+
+                // Check for test/dummy answers
+                const testPhrases = ['test', 'hello', 'random', 'asdf', 'qwerty', 'abc', '123'];
+                const isTestAnswer = testPhrases.some(phrase => answerLower.includes(phrase)) && wordCount < 10;
+
+                if (isTestAnswer) {
+                    return {
+                        score: Math.floor(Math.random() * 15) + 10, // 10-24 points out of 100
+                        strengths: [],
+                        weaknesses: ['Answer appears to be a test response', 'Lacks professional content', 'Too brief'],
+                        suggestions: ['Provide a genuine, thoughtful response', 'Include specific examples', 'Elaborate on your experience'],
+                        idealAnswer: 'A professional response with specific examples and detailed explanations.',
+                        wordCount,
+                        relevanceScore: 10,
+                        contentScore: 20,
+                        clarityScore: 30,
+                        structureScore: 20
+                    };
+                }
+
+                // Role-specific keyword analysis
+                const roleKeywords = {
+                    'Software Engineer': ['code', 'programming', 'development', 'algorithm', 'debugging', 'testing', 'framework', 'api', 'database', 'architecture'],
+                    'Data Scientist': ['data', 'analysis', 'model', 'machine learning', 'statistics', 'python', 'sql', 'visualization', 'insights', 'prediction'],
+                    'Product Manager': ['product', 'user', 'requirements', 'roadmap', 'stakeholder', 'metrics', 'launch', 'strategy', 'market', 'customer']
+                };
+
+                const keywords = roleKeywords[jobRole] || [];
+                const keywordMatches = keywords.filter(keyword => answerLower.includes(keyword)).length;
+                const relevanceScore = Math.min(10, Math.max(1, (keywordMatches / keywords.length) * 10 + (wordCount > 20 ? 2 : 0)));
+
+                // Content quality analysis
+                let contentScore = 5; // Base score
+                if (wordCount > 50) contentScore += 2;
+                if (wordCount > 100) contentScore += 1;
+                if (answerLower.includes('example') || answerLower.includes('experience')) contentScore += 1;
+                if (answerLower.includes('result') || answerLower.includes('outcome')) contentScore += 1;
+                contentScore = Math.min(10, contentScore);
+
+                // Clarity analysis
+                let clarityScore = 6; // Base score
+                const sentences = answer.split(/[.!?]+/).filter(s => s.trim().length > 0);
+                if (sentences.length > 2) clarityScore += 1;
+                if (wordCount > 30 && wordCount < 200) clarityScore += 1; // Good length
+                if (!/\b(um|uh|like|you know)\b/gi.test(answer)) clarityScore += 1;
+                clarityScore = Math.min(10, clarityScore);
+
+                // Structure analysis
+                let structureScore = 5; // Base score
+                if (sentences.length >= 3) structureScore += 2; // Multiple sentences
+                if (answerLower.includes('first') || answerLower.includes('then') || answerLower.includes('finally')) structureScore += 1;
+                if (answerLower.includes('situation') || answerLower.includes('task') || answerLower.includes('action') || answerLower.includes('result')) structureScore += 2; // STAR method
+                structureScore = Math.min(10, structureScore);
+
+                // Convert all scores to percentages (0-100)
+                const relevancePercentage = Math.round(relevanceScore * 10);
+                const contentPercentage = Math.round(contentScore * 10);
+                const clarityPercentage = Math.round(clarityScore * 10);
+                const structurePercentage = Math.round(structureScore * 10);
+                
+                // Overall score calculation as percentage
+                const overallScore = Math.round((relevancePercentage + contentPercentage + clarityPercentage + structurePercentage) / 4);
+
+                // Generate feedback based on score
+                const strengths = [];
+                const weaknesses = [];
+                const suggestions = [];
+
+                if (overallScore >= 80) {
+                    strengths.push('Excellent detailed response', 'Strong use of specific examples', 'Clear and well-structured');
+                } else if (overallScore >= 60) {
+                    strengths.push('Good content quality', 'Relevant to the question');
+                    if (wordCount < 30) weaknesses.push('Could be more detailed');
+                    if (keywordMatches < 2) weaknesses.push('Could include more role-specific details');
+                } else {
+                    if (wordCount < 20) weaknesses.push('Response is too brief');
+                    if (keywordMatches === 0) weaknesses.push('Lacks role-specific content');
+                    weaknesses.push('Needs more specific examples');
+                }
+
+                if (overallScore < 70) {
+                    suggestions.push('Include specific examples from your experience');
+                    suggestions.push('Use the STAR method (Situation, Task, Action, Result)');
+                    if (keywordMatches < 2) suggestions.push('Include more technical/role-specific details');
+                }
+
+                return {
+                    score: overallScore,
+                    strengths,
+                    weaknesses: weaknesses.length > 0 ? weaknesses : ['Minor areas for improvement'],
+                    suggestions: suggestions.length > 0 ? suggestions : ['Continue with this level of detail'],
+                    idealAnswer: this.generateIdealAnswer(question, jobRole),
+                    wordCount,
+                    relevanceScore: relevancePercentage,
+                    contentScore: contentPercentage,
+                    clarityScore: clarityPercentage,
+                    structureScore: structurePercentage
+                };
+            }
+
+            static generateIdealAnswer(question, jobRole) {
+                const ideals = {
+                    'Software Engineer': 'An ideal answer would include specific technical details, mention relevant technologies, describe your problem-solving process, and quantify the impact of your work.',
+                    'Data Scientist': 'A strong response should outline your analytical approach, mention specific tools and techniques, discuss data challenges, and explain how your insights drove business decisions.',
+                    'Product Manager': 'An excellent answer would demonstrate strategic thinking, show understanding of user needs, explain your decision-making process, and include metrics or outcomes.'
+                };
+
+                return ideals[jobRole] || 'A comprehensive answer should include specific examples, demonstrate relevant skills, show problem-solving ability, and highlight measurable results.';
+            }
+        }
+
+        // Enhanced Interview Application
+        class HireVistaApp {
+            constructor() {
+                this.auth = new MockAuth();
+                this.currentInterview = null;
+                this.currentQuestionIndex = 0;
+                this.timer = null;
+                this.timeRemaining = 0;
+                this.isRecording = false;
+                this.recordingStartTime = null;
+                this.mediaRecorder = null;
+                this.recordedChunks = [];
+                this.videoStream = null;
+                this.cameraEnabled = false;
+                this.microphoneEnabled = false;
+                
+                this.initializeApp();
+            }
+
+            initializeApp() {
+                this.setupEventListeners();
+                this.updateUI();
+                this.updateDashboardStats();
+            }
+
+            setupEventListeners() {
+                // Navigation and Auth
+                document.getElementById('signInBtn').addEventListener('click', () => this.showSignInModal());
+                document.getElementById('signUpBtn').addEventListener('click', () => this.showSignUpModal());
+                document.getElementById('heroSignInBtn').addEventListener('click', () => this.showSignInModal());
+                document.getElementById('heroSignUpBtn').addEventListener('click', () => this.showSignUpModal());
+                document.getElementById('googleSignInBtn').addEventListener('click', () => this.signInWithGoogle());
+                document.getElementById('signOutBtn').addEventListener('click', () => this.signOut());
+                
+                // Profile dropdown
+                document.getElementById('profileBtn').addEventListener('click', () => this.toggleProfileMenu());
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#profileDropdown')) {
+                        this.hideProfileMenu();
+                    }
+                });
+                
+                // Modal controls
+                document.getElementById('closeSignInModal').addEventListener('click', () => this.hideSignInModal());
+                document.getElementById('closeSignUpModal').addEventListener('click', () => this.hideSignUpModal());
+                document.getElementById('switchToSignUp').addEventListener('click', () => this.switchToSignUp());
+                document.getElementById('switchToSignIn').addEventListener('click', () => this.switchToSignIn());
+                
+                // Form submissions
+                document.getElementById('signInForm').addEventListener('submit', (e) => this.handleSignIn(e));
+                document.getElementById('signUpForm').addEventListener('submit', (e) => this.handleSignUp(e));
+                document.getElementById('googleSignInModal').addEventListener('click', () => this.signInWithGoogle());
+                document.getElementById('googleSignUpModal').addEventListener('click', () => this.signInWithGoogle());
+                
+                // Dashboard
+                document.getElementById('newInterviewBtn').addEventListener('click', () => this.showNewInterviewForm());
+                document.getElementById('practiceBtn').addEventListener('click', () => this.startQuickPractice());
+                document.getElementById('resourcesBtn').addEventListener('click', () => this.showResourceHub());
+                document.getElementById('cancelInterviewBtn').addEventListener('click', () => this.hideNewInterviewForm());
+                document.getElementById('startInterviewBtn').addEventListener('click', () => this.createInterview());
+                
+                // Interview Setup
+                document.getElementById('toggleCamera').addEventListener('click', () => this.toggleCamera());
+                document.getElementById('proceedToInterview').addEventListener('click', () => this.startInterview());
+                
+                // Interview
+                document.getElementById('nextQuestionBtn').addEventListener('click', () => this.nextQuestion());
+                document.getElementById('prevQuestionBtn').addEventListener('click', () => this.prevQuestion());
+                document.getElementById('recordBtn').addEventListener('click', () => this.toggleRecording());
+                document.getElementById('videoRecordBtn').addEventListener('click', () => this.toggleVideoRecording());
+                
+                // Text answer word count
+                document.getElementById('textAnswer').addEventListener('input', (e) => {
+                    const wordCount = e.target.value.trim().split(/\s+/).filter(word => word.length > 0).length;
+                    document.getElementById('wordCount').textContent = wordCount;
+                });
+                
+                // Results
+                document.getElementById('backToDashboardBtn').addEventListener('click', () => this.showDashboard());
+                document.getElementById('downloadPDF').addEventListener('click', () => this.downloadPDF());
+                document.getElementById('shareResults').addEventListener('click', () => this.shareResults());
+                document.getElementById('retakeInterview').addEventListener('click', () => this.retakeInterview());
+            }
+
+            showSignInModal() {
+                document.getElementById('signInModal').classList.remove('hidden');
+            }
+
+            hideSignInModal() {
+                document.getElementById('signInModal').classList.add('hidden');
+            }
+
+            showSignUpModal() {
+                document.getElementById('signUpModal').classList.remove('hidden');
+            }
+
+            hideSignUpModal() {
+                document.getElementById('signUpModal').classList.add('hidden');
+            }
+
+            switchToSignUp() {
+                this.hideSignInModal();
+                this.showSignUpModal();
+            }
+
+            switchToSignIn() {
+                this.hideSignUpModal();
+                this.showSignInModal();
+            }
+
+            handleSignIn(e) {
+                e.preventDefault();
+                const email = document.getElementById('signInEmail').value;
+                const password = document.getElementById('signInPassword').value;
+                
+                try {
+                    const user = this.auth.signIn(email, password);
+                    this.hideSignInModal();
+                    this.updateUI();
+                    this.showDashboard();
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+
+            handleSignUp(e) {
+                e.preventDefault();
+                const name = document.getElementById('signUpName').value;
+                const username = document.getElementById('signUpUsername').value;
+                const email = document.getElementById('signUpEmail').value;
+                const password = document.getElementById('signUpPassword').value;
+                
+                try {
+                    const user = this.auth.signUp(name, username, email, password);
+                    this.hideSignUpModal();
+                    this.updateUI();
+                    this.showDashboard();
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+
+            signInWithGoogle() {
+                const user = this.auth.signInWithGoogle();
+                this.hideSignInModal();
+                this.hideSignUpModal();
+                this.updateUI();
+                this.showDashboard();
+            }
+
+            signOut() {
+                this.auth.signOut();
+                this.updateUI();
+                this.showLanding();
+            }
+
+            toggleProfileMenu() {
+                const menu = document.getElementById('profileMenu');
+                menu.classList.toggle('hidden');
+            }
+
+            hideProfileMenu() {
+                document.getElementById('profileMenu').classList.add('hidden');
+            }
+
+            updateUI() {
+                const user = this.auth.getCurrentUser();
+                const authButtons = document.getElementById('authButtons');
+                const profileDropdown = document.getElementById('profileDropdown');
+                const navLinks = document.getElementById('navLinks');
+
+                if (user) {
+                    // Hide auth buttons, show profile dropdown and nav links
+                    authButtons.classList.add('hidden');
+                    profileDropdown.classList.remove('hidden');
+                    navLinks.classList.remove('hidden');
+                    
+                    // Update profile info
+                    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    document.getElementById('userAvatar').textContent = initials;
+                    document.getElementById('menuAvatar').textContent = initials;
+                    document.getElementById('userDisplayName').textContent = user.name;
+                    document.getElementById('menuUserName').textContent = user.name;
+                    document.getElementById('menuUserEmail').textContent = user.email;
+                    document.getElementById('menuUserId').textContent = user.id;
+                    document.getElementById('menuUserStreak').textContent = `🔥 ${user.streak || 0} days`;
+                    document.getElementById('menuTotalInterviews').textContent = `${user.interviews?.length || 0} completed`;
+                } else {
+                    // Show auth buttons, hide profile dropdown and nav links
+                    authButtons.classList.remove('hidden');
+                    profileDropdown.classList.add('hidden');
+                    navLinks.classList.add('hidden');
+                }
+            }
+
+            updateDashboardStats() {
+                const user = this.auth.getCurrentUser();
+                if (!user) return;
+
+                const interviews = user.interviews || [];
+                const totalInterviews = interviews.length;
+                const averageScore = totalInterviews > 0 
+                    ? Math.round(interviews.reduce((sum, i) => sum + i.overallScore, 0) / totalInterviews)
+                    : 0;
+                const currentStreak = user.streak || 0;
+                const achievementCount = user.achievements ? user.achievements.length : 0;
+
+                document.getElementById('totalInterviews').textContent = totalInterviews;
+                document.getElementById('averageScore').textContent = averageScore + '%';
+                document.getElementById('currentStreak').textContent = currentStreak + ' days';
+                document.getElementById('achievementCount').textContent = achievementCount;
+
+                this.updateAchievements();
+            }
+
+            updateAchievements() {
+                const user = this.auth.getCurrentUser();
+                if (!user || !user.achievements) return;
+
+                const container = document.getElementById('achievementsList');
+                if (user.achievements.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4 text-gray-500"><p>Complete your first interview to unlock achievements!</p></div>';
+                    return;
+                }
+
+                container.innerHTML = user.achievements.map(achievement => `
+                    <div class="achievement-badge text-white px-4 py-2 rounded-full text-sm font-medium">
+                        🏆 ${achievement.name}
+                    </div>
+                `).join('');
+            }
+
+            showLanding() {
+                this.hideAllPages();
+                document.getElementById('landingPage').classList.remove('hidden');
+            }
+
+            showDashboard() {
+                const user = this.auth.getCurrentUser();
+                if (!user) {
+                    this.showSignInModal();
+                    return;
+                }
+                
+                this.hideAllPages();
+                document.getElementById('dashboard').classList.remove('hidden');
+                this.updateDashboardStats();
+                this.loadPreviousInterviews();
+            }
+
+            showResourceHub() {
+                this.hideAllPages();
+                document.getElementById('resourceHub').classList.remove('hidden');
+            }
+
+            showAnalytics() {
+                this.hideAllPages();
+                document.getElementById('analyticsPage').classList.remove('hidden');
+                this.updateAnalytics();
+            }
+
+            updateAnalytics() {
+                const user = this.auth.getCurrentUser();
+                if (!user || !user.interviews || user.interviews.length === 0) {
+                    this.showEmptyAnalytics();
+                    return;
+                }
+
+                const interviews = user.interviews;
+                
+                // Update summary cards
+                this.updateAnalyticsSummary(interviews);
+                
+                // Render charts
+                this.renderScoreProgressionChart(interviews);
+                this.renderSkillsBreakdownChart(interviews);
+                this.renderRolePerformanceChart(interviews);
+                this.renderRecentActivity(interviews);
+            }
+
+            updateAnalyticsSummary(interviews) {
+                // Best Score
+                const bestScore = Math.max(...interviews.map(i => i.overallScore));
+                document.getElementById('analyticsBestScore').textContent = bestScore + '%';
+
+                // Improvement (comparing first and last interview)
+                if (interviews.length > 1) {
+                    const firstScore = interviews[0].overallScore;
+                    const lastScore = interviews[interviews.length - 1].overallScore;
+                    const improvement = lastScore - firstScore;
+                    const improvementElement = document.getElementById('analyticsImprovement');
+                    improvementElement.textContent = (improvement >= 0 ? '+' : '') + improvement + '%';
+                    improvementElement.className = improvement >= 0 ? 'text-2xl font-bold text-green-600' : 'text-2xl font-bold text-red-600';
+                } else {
+                    document.getElementById('analyticsImprovement').textContent = '+0%';
+                }
+
+                // Favorite Role (most interviewed role)
+                const roleCounts = {};
+                interviews.forEach(i => {
+                    roleCounts[i.jobRole] = (roleCounts[i.jobRole] || 0) + 1;
+                });
+                const favoriteRole = Object.keys(roleCounts).reduce((a, b) => roleCounts[a] > roleCounts[b] ? a : b, 'None');
+                document.getElementById('analyticsFavoriteRole').textContent = favoriteRole;
+
+                // This Month
+                const thisMonth = new Date().getMonth();
+                const thisYear = new Date().getFullYear();
+                const thisMonthCount = interviews.filter(i => {
+                    const interviewDate = new Date(i.completedAt);
+                    return interviewDate.getMonth() === thisMonth && interviewDate.getFullYear() === thisYear;
+                }).length;
+                document.getElementById('analyticsThisMonth').textContent = thisMonthCount;
+            }
+
+            renderScoreProgressionChart(interviews) {
+                const container = document.getElementById('scoreProgressionChart');
+                
+                if (interviews.length === 0) {
+                    container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">No data available</div>';
+                    return;
+                }
+
+                // Create simple line chart with CSS
+                const maxScore = 100;
+                const chartHeight = 200;
+                const chartWidth = container.offsetWidth - 40;
+                
+                let chartHTML = '<div class="relative" style="height: 200px; padding: 20px;">';
+                
+                // Y-axis labels
+                chartHTML += '<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500">';
+                for (let i = 100; i >= 0; i -= 20) {
+                    chartHTML += `<span>${i}%</span>`;
+                }
+                chartHTML += '</div>';
+                
+                // Chart area
+                chartHTML += '<div class="ml-8 h-full relative border-l border-b border-gray-300">';
+                
+                // Data points and lines
+                const pointWidth = (chartWidth - 60) / Math.max(interviews.length - 1, 1);
+                
+                interviews.forEach((interview, index) => {
+                    const x = index * pointWidth;
+                    const y = chartHeight - (interview.overallScore / maxScore) * chartHeight;
+                    
+                    // Point
+                    chartHTML += `<div class="absolute w-3 h-3 bg-blue-500 rounded-full transform -translate-x-1.5 -translate-y-1.5" 
+                                       style="left: ${x}px; top: ${y}px;" 
+                                       title="Interview ${index + 1}: ${interview.overallScore}%"></div>`;
+                    
+                    // Line to next point
+                    if (index < interviews.length - 1) {
+                        const nextX = (index + 1) * pointWidth;
+                        const nextY = chartHeight - (interviews[index + 1].overallScore / maxScore) * chartHeight;
+                        const lineLength = Math.sqrt(Math.pow(nextX - x, 2) + Math.pow(nextY - y, 2));
+                        const angle = Math.atan2(nextY - y, nextX - x) * 180 / Math.PI;
+                        
+                        chartHTML += `<div class="absolute h-0.5 bg-blue-500 origin-left" 
+                                           style="left: ${x}px; top: ${y}px; width: ${lineLength}px; transform: rotate(${angle}deg);"></div>`;
+                    }
+                });
+                
+                chartHTML += '</div>';
+                
+                // X-axis labels
+                chartHTML += '<div class="ml-8 mt-2 flex justify-between text-xs text-gray-500">';
+                interviews.forEach((interview, index) => {
+                    const date = new Date(interview.completedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    chartHTML += `<span>${date}</span>`;
+                });
+                chartHTML += '</div>';
+                
+                chartHTML += '</div>';
+                
+                container.innerHTML = chartHTML;
+            }
+
+            renderSkillsBreakdownChart(interviews) {
+                const container = document.getElementById('skillsBreakdownChart');
+                
+                if (interviews.length === 0) {
+                    container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">No data available</div>';
+                    return;
+                }
+
+                // Calculate average scores for each skill
+                const avgContent = Math.round(interviews.reduce((sum, i) => sum + (i.contentScore || 0), 0) / interviews.length);
+                const avgClarity = Math.round(interviews.reduce((sum, i) => sum + (i.clarityScore || 0), 0) / interviews.length);
+                const avgConfidence = Math.round(interviews.reduce((sum, i) => sum + (i.confidenceScore || 0), 0) / interviews.length);
+                const avgStructure = Math.round(interviews.reduce((sum, i) => sum + (i.structureScore || 0), 0) / interviews.length);
+
+                const skills = [
+                    { name: 'Content', score: avgContent, color: 'bg-blue-500' },
+                    { name: 'Clarity', score: avgClarity, color: 'bg-green-500' },
+                    { name: 'Confidence', score: avgConfidence, color: 'bg-purple-500' },
+                    { name: 'Structure', score: avgStructure, color: 'bg-pink-500' }
+                ];
+
+                let chartHTML = '<div class="space-y-4 p-4">';
+                
+                skills.forEach(skill => {
+                    chartHTML += `
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-gray-700">${skill.name}</span>
+                                <span class="text-sm text-gray-600">${skill.score}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="${skill.color} h-3 rounded-full transition-all duration-500" style="width: ${skill.score}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                chartHTML += '</div>';
+                
+                container.innerHTML = chartHTML;
+            }
+
+            renderRolePerformanceChart(interviews) {
+                const container = document.getElementById('rolePerformanceChart');
+                
+                if (interviews.length === 0) {
+                    container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">No data available</div>';
+                    return;
+                }
+
+                // Group by role and calculate averages
+                const roleData = {};
+                interviews.forEach(interview => {
+                    if (!roleData[interview.jobRole]) {
+                        roleData[interview.jobRole] = { scores: [], count: 0 };
+                    }
+                    roleData[interview.jobRole].scores.push(interview.overallScore);
+                    roleData[interview.jobRole].count++;
+                });
+
+                const rolePerformance = Object.keys(roleData).map(role => ({
+                    role,
+                    avgScore: Math.round(roleData[role].scores.reduce((sum, score) => sum + score, 0) / roleData[role].count),
+                    count: roleData[role].count
+                })).sort((a, b) => b.avgScore - a.avgScore);
+
+                let chartHTML = '<div class="space-y-3 p-4">';
+                
+                rolePerformance.forEach((item, index) => {
+                    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-yellow-500'];
+                    const color = colors[index % colors.length];
+                    
+                    chartHTML += `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-4 h-4 ${color} rounded"></div>
+                                <div>
+                                    <div class="font-medium text-gray-900">${item.role}</div>
+                                    <div class="text-sm text-gray-600">${item.count} interview${item.count > 1 ? 's' : ''}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-gray-900">${item.avgScore}%</div>
+                                <div class="text-xs text-gray-500">Average</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                chartHTML += '</div>';
+                
+                container.innerHTML = chartHTML;
+            }
+
+            renderRecentActivity(interviews) {
+                const container = document.getElementById('recentActivityList');
+                
+                if (interviews.length === 0) {
+                    container.innerHTML = '<div class="text-center py-8 text-gray-500">No recent activity</div>';
+                    return;
+                }
+
+                // Show last 5 interviews
+                const recentInterviews = interviews.slice(-5).reverse();
+                
+                let activityHTML = '';
+                
+                recentInterviews.forEach(interview => {
+                    const date = new Date(interview.completedAt).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const scoreColor = interview.overallScore >= 80 ? 'text-green-600' : 
+                                     interview.overallScore >= 60 ? 'text-yellow-600' : 'text-red-600';
+                    
+                    activityHTML += `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    ${interview.jobRole.split(' ').map(w => w[0]).join('')}
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">${interview.jobRole}</div>
+                                    <div class="text-sm text-gray-600">${interview.questions.length} questions • ${interview.experienceLevel}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold ${scoreColor}">${interview.overallScore}%</div>
+                                <div class="text-xs text-gray-500">${date}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = activityHTML;
+            }
+
+            showEmptyAnalytics() {
+                // Update summary cards to show empty state
+                document.getElementById('analyticsBestScore').textContent = '0%';
+                document.getElementById('analyticsImprovement').textContent = '+0%';
+                document.getElementById('analyticsFavoriteRole').textContent = 'None';
+                document.getElementById('analyticsThisMonth').textContent = '0';
+
+                // Show empty state for charts
+                const emptyMessage = '<div class="flex flex-col items-center justify-center h-full text-gray-500"><div class="text-4xl mb-2">📊</div><p>Complete interviews to see analytics</p></div>';
+                
+                document.getElementById('scoreProgressionChart').innerHTML = emptyMessage;
+                document.getElementById('skillsBreakdownChart').innerHTML = emptyMessage;
+                document.getElementById('rolePerformanceChart').innerHTML = emptyMessage;
+                document.getElementById('recentActivityList').innerHTML = '<div class="text-center py-8 text-gray-500"><div class="text-4xl mb-2">📝</div><p>No interviews completed yet</p></div>';
+            }
+
+            showPricing() {
+                this.hideAllPages();
+                document.getElementById('pricingPage').classList.remove('hidden');
+            }
+
+            showNewInterviewForm() {
+                document.getElementById('newInterviewForm').classList.remove('hidden');
+            }
+
+            hideNewInterviewForm() {
+                document.getElementById('newInterviewForm').classList.add('hidden');
+            }
+
+            loadPreviousInterviews() {
+                const user = this.auth.getCurrentUser();
+                const container = document.getElementById('previousInterviews');
+                
+                if (!user || !user.interviews || user.interviews.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <div class="text-4xl mb-2">📝</div>
+                            <p>No interviews yet. Create your first interview to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = user.interviews.map(interview => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">${interview.jobRole}</h4>
+                                <p class="text-sm text-gray-600">${interview.experienceLevel} • ${interview.questions.length} questions • ${interview.answerType}</p>
+                                <p class="text-sm text-gray-500">${new Date(interview.completedAt).toLocaleDateString()}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold ${interview.overallScore >= 80 ? 'text-green-600' : interview.overallScore >= 60 ? 'text-yellow-600' : 'text-red-600'}">${interview.overallScore}%</div>
+                                <button onclick="app.viewResults('${interview.id}')" class="text-sm text-blue-600 hover:text-blue-800">View Results</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            createInterview() {
+                const jobRole = document.getElementById('jobRole').value;
+                const experienceLevel = document.getElementById('experienceLevel').value;
+                const companyType = document.getElementById('companyType').value;
+                const questionCount = document.getElementById('questionCount').value;
+                const difficultyLevel = document.getElementById('difficultyLevel').value;
+                const answerType = document.getElementById('answerType').value;
+
+                if (!jobRole) {
+                    alert('Please select a job role');
+                    return;
+                }
+
+                // Generate questions
+                const questions = SmartAI.generateQuestions(jobRole, experienceLevel, questionCount, companyType, difficultyLevel);
+                
+                this.currentInterview = {
+                    id: 'interview_' + Date.now(),
+                    jobRole,
+                    experienceLevel,
+                    companyType,
+                    difficultyLevel,
+                    answerType,
+                    questions: questions.map(q => ({
+                        ...q,
+                        userAnswer: '',
+                        feedback: null,
+                        timeSpent: 0,
+                        recordingType: null
+                    })),
+                    startedAt: new Date().toISOString(),
+                    overallScore: 0
+                };
+
+                this.currentQuestionIndex = 0;
+                this.hideNewInterviewForm();
+                
+                // Show setup page for video/voice interviews
+                if (answerType === 'video' || answerType === 'voice') {
+                    this.showInterviewSetup();
+                } else {
+                    this.showInterviewPage();
+                }
+            }
+
+            showInterviewSetup() {
+                this.hideAllPages();
+                document.getElementById('interviewSetup').classList.remove('hidden');
+                document.getElementById('setupQuestionCount').textContent = this.currentInterview.questions.length;
+            }
+
+            async toggleCamera() {
+                const video = document.getElementById('videoPreview');
+                const button = document.getElementById('toggleCamera');
+                const status = document.getElementById('cameraStatus');
+                const check = document.getElementById('cameraCheck');
+
+                if (!this.cameraEnabled) {
+                    try {
+                        this.videoStream = await navigator.mediaDevices.getUserMedia({ 
+                            video: true, 
+                            audio: this.currentInterview.answerType === 'video' 
+                        });
+                        video.srcObject = this.videoStream;
+                        this.cameraEnabled = true;
+                        button.textContent = 'Disable Camera';
+                        button.className = 'mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors';
+                        status.textContent = 'Camera On';
+                        status.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-green-500 text-white';
+                        check.textContent = 'Working';
+                        check.className = 'text-green-600';
+                        this.checkSetupComplete();
+                    } catch (error) {
+                        alert('Could not access camera. Please check permissions.');
+                    }
+                } else {
+                    if (this.videoStream) {
+                        this.videoStream.getTracks().forEach(track => track.stop());
+                        video.srcObject = null;
+                    }
+                    this.cameraEnabled = false;
+                    button.textContent = 'Enable Camera';
+                    button.className = 'mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors';
+                    status.textContent = 'Camera Off';
+                    status.className = 'absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium bg-red-500 text-white';
+                    check.textContent = 'Not tested';
+                    check.className = '';
+                }
+            }
+
+
+
+            checkSetupComplete() {
+                const proceedBtn = document.getElementById('proceedToInterview');
+                const isVideoInterview = this.currentInterview.answerType === 'video';
+                const isVoiceInterview = this.currentInterview.answerType === 'voice';
+
+                if (isVideoInterview && this.cameraEnabled) {
+                    proceedBtn.disabled = false;
+                    proceedBtn.textContent = 'Start Interview';
+                } else if (isVoiceInterview) {
+                    // Microphone is always ready for voice interviews
+                    proceedBtn.disabled = false;
+                    proceedBtn.textContent = 'Start Interview';
+                } else if (!isVideoInterview && !isVoiceInterview) {
+                    // Text interviews don't need setup
+                    proceedBtn.disabled = false;
+                    proceedBtn.textContent = 'Start Interview';
+                } else {
+                    proceedBtn.disabled = true;
+                    proceedBtn.textContent = 'Complete camera setup to continue';
+                }
+            }
+
+            startInterview() {
+                this.showInterviewPage();
+            }
+
+            showInterviewPage() {
+                this.hideAllPages();
+                document.getElementById('interviewPage').classList.remove('hidden');
+                
+                // Setup video for video interviews
+                if (this.currentInterview.answerType === 'video') {
+                    const interviewVideo = document.getElementById('interviewVideo');
+                    if (this.videoStream) {
+                        interviewVideo.srcObject = this.videoStream;
+                    }
+                }
+                
+                this.loadCurrentQuestion();
+            }
+
+            loadCurrentQuestion() {
+                const question = this.currentInterview.questions[this.currentQuestionIndex];
+                const totalQuestions = this.currentInterview.questions.length;
+                
+                // Update progress
+                document.getElementById('questionProgress').textContent = `${this.currentQuestionIndex + 1} of ${totalQuestions}`;
+                document.getElementById('progressBar').style.width = `${((this.currentQuestionIndex + 1) / totalQuestions) * 100}%`;
+                document.getElementById('currentQuestionNum').textContent = this.currentQuestionIndex + 1;
+                document.getElementById('questionText').textContent = question.question;
+
+                // Update monitoring panel
+                document.getElementById('questionsCompleted').textContent = `${this.currentQuestionIndex}/${totalQuestions}`;
+
+                // Setup answer section
+                const textSection = document.getElementById('textAnswerSection');
+                const voiceSection = document.getElementById('voiceAnswerSection');
+                const videoSection = document.getElementById('videoAnswerSection');
+                
+                // Hide all sections first
+                textSection.classList.add('hidden');
+                voiceSection.classList.add('hidden');
+                videoSection.classList.add('hidden');
+
+                if (this.currentInterview.answerType === 'text') {
+                    textSection.classList.remove('hidden');
+                    document.getElementById('textAnswer').value = question.userAnswer || '';
+                    document.getElementById('wordCount').textContent = '0';
+                    this.startTimer(question.timeLimit);
+                } else if (this.currentInterview.answerType === 'voice') {
+                    voiceSection.classList.remove('hidden');
+                    this.resetRecordingUI();
+                    this.setupTimer(question.timeLimit);
+                } else if (this.currentInterview.answerType === 'video') {
+                    videoSection.classList.remove('hidden');
+                    this.resetVideoRecordingUI();
+                    this.setupTimer(question.timeLimit);
+                }
+
+                // Update navigation buttons
+                document.getElementById('prevQuestionBtn').disabled = this.currentQuestionIndex === 0;
+                const nextBtn = document.getElementById('nextQuestionBtn');
+                nextBtn.textContent = this.currentQuestionIndex === totalQuestions - 1 ? 'Finish Interview' : 'Next Question';
+
+                // Update live tips
+                this.updateLiveTips();
+            }
+
+            updateLiveTips() {
+                const tips = [
+                    "💡 Use specific examples to strengthen your answer",
+                    "🎯 Structure your response with the STAR method",
+                    "📊 Include quantifiable results when possible",
+                    "🔍 Focus on your role and contributions",
+                    "⭐ Highlight your unique skills and experience"
+                ];
+                
+                const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                document.getElementById('liveTips').innerHTML = `<p>${randomTip}</p>`;
+            }
+
+            setupTimer(seconds) {
+                this.timeRemaining = seconds;
+                this.updateTimerDisplay();
+            }
+
+            startTimer(seconds) {
+                this.timeRemaining = seconds;
+                this.updateTimerDisplay();
+                
+                this.timer = setInterval(() => {
+                    this.timeRemaining--;
+                    this.updateTimerDisplay();
+                    
+                    if (this.timeRemaining <= 0) {
+                        this.timeUp();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timeRemaining / 60);
+                const seconds = this.timeRemaining % 60;
+                const timerElement = document.getElementById('timer');
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Change color based on time remaining
+                if (this.timeRemaining <= 30) {
+                    timerElement.className = 'text-3xl font-bold text-red-600';
+                } else if (this.timeRemaining <= 60) {
+                    timerElement.className = 'text-3xl font-bold text-yellow-600';
+                } else {
+                    timerElement.className = 'text-3xl font-bold text-blue-600';
+                }
+            }
+
+            timeUp() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+                
+                if (this.isRecording) {
+                    this.stopRecording();
+                }
+                
+                alert('Time is up for this question!');
+                this.nextQuestion();
+            }
+
+            async toggleRecording() {
+                if (!this.isRecording) {
+                    await this.startRecording();
+                } else {
+                    this.stopRecording();
+                }
+            }
+
+            async startRecording() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    this.mediaRecorder = new MediaRecorder(stream);
+                    this.recordedChunks = [];
+                    
+                    this.mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            this.recordedChunks.push(event.data);
+                        }
+                    };
+                    
+                    this.mediaRecorder.onstop = () => {
+                        const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+                        this.currentInterview.questions[this.currentQuestionIndex].userAnswer = 'Voice recording completed';
+                        this.currentInterview.questions[this.currentQuestionIndex].recordingType = 'audio';
+                        document.getElementById('recordingComplete').classList.remove('hidden');
+                    };
+                    
+                    this.mediaRecorder.start();
+                    this.isRecording = true;
+                    this.recordingStartTime = Date.now();
+                    
+                    // Start timer only when recording starts
+                    this.startTimer(this.currentInterview.questions[this.currentQuestionIndex].timeLimit);
+                    
+                    // Update UI
+                    document.getElementById('recordBtnText').textContent = '⏹️ Stop Recording';
+                    document.getElementById('recordBtn').className = 'bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-4 rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg';
+                    document.getElementById('recordingStatus').classList.remove('hidden');
+                    
+                    this.startRecordingTimer();
+                    
+                } catch (error) {
+                    console.error('Error starting recording:', error);
+                    alert('Could not access microphone. Please check permissions.');
+                }
+            }
+
+            startRecordingTimer() {
+                const recordingTimeDisplay = document.getElementById('recordingTime');
+                const updateRecordingTime = () => {
+                    if (this.isRecording && this.recordingStartTime) {
+                        const elapsed = Math.floor((Date.now() - this.recordingStartTime) / 1000);
+                        const minutes = Math.floor(elapsed / 60);
+                        const seconds = elapsed % 60;
+                        recordingTimeDisplay.textContent = 
+                            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                };
+                
+                this.recordingTimer = setInterval(updateRecordingTime, 1000);
+            }
+
+            stopRecording() {
+                if (this.mediaRecorder && this.isRecording) {
+                    this.mediaRecorder.stop();
+                    this.mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                    this.isRecording = false;
+                    
+                    if (this.recordingTimer) {
+                        clearInterval(this.recordingTimer);
+                        this.recordingTimer = null;
+                    }
+                    
+                    const speakingTime = Math.floor((Date.now() - this.recordingStartTime) / 1000);
+                    this.currentInterview.questions[this.currentQuestionIndex].timeSpent = speakingTime;
+                    
+                    this.resetRecordingUI();
+                }
+            }
+
+            resetRecordingUI() {
+                document.getElementById('recordBtnText').textContent = '🎤 Start Recording';
+                document.getElementById('recordBtn').className = 'bg-gradient-to-r from-red-500 to-pink-500 text-white px-8 py-4 rounded-full hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg';
+                document.getElementById('recordingStatus').classList.add('hidden');
+                document.getElementById('recordingComplete').classList.add('hidden');
+            }
+
+            async toggleVideoRecording() {
+                if (!this.isRecording) {
+                    await this.startVideoRecording();
+                } else {
+                    this.stopVideoRecording();
+                }
+            }
+
+            async startVideoRecording() {
+                try {
+                    this.mediaRecorder = new MediaRecorder(this.videoStream);
+                    this.recordedChunks = [];
+                    
+                    this.mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            this.recordedChunks.push(event.data);
+                        }
+                    };
+                    
+                    this.mediaRecorder.onstop = () => {
+                        const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+                        this.currentInterview.questions[this.currentQuestionIndex].userAnswer = 'Video recording completed';
+                        this.currentInterview.questions[this.currentQuestionIndex].recordingType = 'video';
+                        document.getElementById('videoRecordingComplete').classList.remove('hidden');
+                    };
+                    
+                    this.mediaRecorder.start();
+                    this.isRecording = true;
+                    this.recordingStartTime = Date.now();
+                    
+                    // Start timer only when recording starts
+                    this.startTimer(this.currentInterview.questions[this.currentQuestionIndex].timeLimit);
+                    
+                    // Update UI
+                    document.getElementById('videoRecordBtnText').textContent = '⏹️ Stop Recording';
+                    document.getElementById('videoRecordBtn').className = 'bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-4 rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-lg';
+                    document.getElementById('videoRecordingStatus').classList.remove('hidden');
+                    
+                } catch (error) {
+                    console.error('Error starting video recording:', error);
+                    alert('Could not start video recording. Please check permissions.');
+                }
+            }
+
+            stopVideoRecording() {
+                if (this.mediaRecorder && this.isRecording) {
+                    this.mediaRecorder.stop();
+                    this.isRecording = false;
+                    
+                    const speakingTime = Math.floor((Date.now() - this.recordingStartTime) / 1000);
+                    this.currentInterview.questions[this.currentQuestionIndex].timeSpent = speakingTime;
+                    
+                    this.resetVideoRecordingUI();
+                }
+            }
+
+            resetVideoRecordingUI() {
+                document.getElementById('videoRecordBtnText').textContent = '📹 Start Video Recording';
+                document.getElementById('videoRecordBtn').className = 'bg-gradient-to-r from-red-500 to-pink-500 text-white px-8 py-4 rounded-full hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg';
+                document.getElementById('videoRecordingStatus').classList.add('hidden');
+                document.getElementById('videoRecordingComplete').classList.add('hidden');
+            }
+
+            nextQuestion() {
+                // Save current answer
+                if (this.currentInterview.answerType === 'text') {
+                    const answer = document.getElementById('textAnswer').value;
+                    this.currentInterview.questions[this.currentQuestionIndex].userAnswer = answer;
+                }
+
+                // Stop timer
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+
+                // Generate feedback for current question
+                const currentQuestion = this.currentInterview.questions[this.currentQuestionIndex];
+                currentQuestion.feedback = SmartAI.analyzeAnswer(
+                    currentQuestion.question, 
+                    currentQuestion.userAnswer,
+                    this.currentInterview.jobRole
+                );
+
+                // Move to next question or finish
+                if (this.currentQuestionIndex < this.currentInterview.questions.length - 1) {
+                    this.currentQuestionIndex++;
+                    this.loadCurrentQuestion();
+                } else {
+                    this.finishInterview();
+                }
+            }
+
+            prevQuestion() {
+                if (this.currentQuestionIndex > 0) {
+                    if (this.timer) {
+                        clearInterval(this.timer);
+                        this.timer = null;
+                    }
+                    
+                    this.currentQuestionIndex--;
+                    this.loadCurrentQuestion();
+                }
+            }
+
+            finishInterview() {
+                // Calculate scores
+                const feedbacks = this.currentInterview.questions
+                    .filter(q => q.feedback)
+                    .map(q => q.feedback);
+                
+                if (feedbacks.length > 0) {
+                    this.currentInterview.overallScore = Math.round(
+                        feedbacks.reduce((sum, f) => sum + f.score, 0) / feedbacks.length
+                    );
+                    
+                    this.currentInterview.contentScore = Math.round(
+                        feedbacks.reduce((sum, f) => sum + f.contentScore, 0) / feedbacks.length
+                    );
+                    
+                    this.currentInterview.clarityScore = Math.round(
+                        feedbacks.reduce((sum, f) => sum + f.clarityScore, 0) / feedbacks.length
+                    );
+                    
+                    this.currentInterview.confidenceScore = Math.round(
+                        feedbacks.reduce((sum, f) => sum + f.relevanceScore, 0) / feedbacks.length
+                    );
+                    
+                    this.currentInterview.structureScore = Math.round(
+                        feedbacks.reduce((sum, f) => sum + f.structureScore, 0) / feedbacks.length
+                    );
+                } else {
+                    this.currentInterview.overallScore = 0;
+                    this.currentInterview.contentScore = 0;
+                    this.currentInterview.clarityScore = 0;
+                    this.currentInterview.confidenceScore = 0;
+                    this.currentInterview.structureScore = 0;
+                }
+                
+                this.currentInterview.completedAt = new Date().toISOString();
+                
+                // Save interview
+                this.auth.saveUserInterview(this.currentInterview);
+                
+                // Clean up video stream
+                if (this.videoStream) {
+                    this.videoStream.getTracks().forEach(track => track.stop());
+                    this.videoStream = null;
+                }
+                
+                this.showResults();
+            }
+
+            showResults() {
+                this.hideAllPages();
+                document.getElementById('resultsPage').classList.remove('hidden');
+                
+                // Update scores
+                document.getElementById('overallScore').textContent = this.currentInterview.overallScore;
+                document.getElementById('contentScore').textContent = this.currentInterview.contentScore;
+                document.getElementById('clarityScore').textContent = this.currentInterview.clarityScore;
+                document.getElementById('confidenceScore').textContent = this.currentInterview.confidenceScore;
+                document.getElementById('structureScore').textContent = this.currentInterview.structureScore;
+                
+                // Show improvement if applicable
+                const user = this.auth.getCurrentUser();
+                if (user.interviews.length > 1) {
+                    const previousScore = user.interviews[user.interviews.length - 2].overallScore;
+                    const improvement = this.currentInterview.overallScore - previousScore;
+                    if (improvement > 0) {
+                        const improvementElement = document.getElementById('scoreImprovement');
+                        improvementElement.textContent = `+${improvement}% from last interview!`;
+                        improvementElement.classList.remove('hidden');
+                    }
+                }
+                
+                // Generate detailed results
+                const resultsContainer = document.getElementById('detailedResults');
+                resultsContainer.innerHTML = this.currentInterview.questions.map((question, index) => `
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Question ${index + 1}</h3>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold ${question.feedback?.score >= 80 ? 'text-green-600' : question.feedback?.score >= 60 ? 'text-yellow-600' : 'text-red-600'}">
+                                    ${question.feedback?.score || 0}%
+                                </div>
+                                ${question.recordingType ? `<div class="text-xs text-gray-500">${question.recordingType} recording</div>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <p class="text-gray-700 font-medium mb-2">Question:</p>
+                            <p class="text-gray-600">${question.question}</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-blue-900 mb-2">Your Answer</h4>
+                                <p class="text-blue-800 text-sm mb-2">${question.userAnswer || 'No answer provided'}</p>
+                                ${question.feedback?.wordCount ? `<p class="text-xs text-blue-600">Word count: ${question.feedback.wordCount}</p>` : ''}
+                            </div>
+                            
+                            <div class="bg-yellow-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-yellow-900 mb-2">AI Feedback</h4>
+                                <div class="text-yellow-800 text-sm">
+                                    <p class="mb-2"><strong>Score:</strong> ${question.feedback?.score || 0}%</p>
+                                    <p class="mb-1"><strong>Strengths:</strong> ${question.feedback?.strengths?.join(', ') || 'None noted'}</p>
+                                    <p class="mb-1"><strong>Areas to improve:</strong> ${question.feedback?.weaknesses?.join(', ') || 'None noted'}</p>
+                                    <p><strong>Suggestions:</strong> ${question.feedback?.suggestions?.join(', ') || 'None provided'}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-pink-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-pink-900 mb-2">Ideal Answer</h4>
+                                <p class="text-pink-800 text-sm">${question.feedback?.idealAnswer || 'No ideal answer provided'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            downloadPDF() {
+                alert('PDF download feature would be implemented with a PDF generation library in a real application.');
+            }
+
+            shareResults() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'My HireVista Interview Results',
+                        text: `I just completed a ${this.currentInterview.jobRole} interview on HireVista and scored ${this.currentInterview.overallScore}%!`,
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback for browsers that don't support Web Share API
+                    const text = `I just completed a ${this.currentInterview.jobRole} interview on HireVista and scored ${this.currentInterview.overallScore}%!`;
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert('Results copied to clipboard!');
+                    });
+                }
+            }
+
+            retakeInterview() {
+                // Reset current interview with same settings
+                const questions = SmartAI.generateQuestions(
+                    this.currentInterview.jobRole,
+                    this.currentInterview.experienceLevel,
+                    this.currentInterview.questions.length,
+                    this.currentInterview.companyType,
+                    this.currentInterview.difficultyLevel
+                );
+                
+                this.currentInterview = {
+                    ...this.currentInterview,
+                    id: 'interview_' + Date.now(),
+                    questions: questions.map(q => ({
+                        ...q,
+                        userAnswer: '',
+                        feedback: null,
+                        timeSpent: 0,
+                        recordingType: null
+                    })),
+                    startedAt: new Date().toISOString(),
+                    overallScore: 0
+                };
+
+                this.currentQuestionIndex = 0;
+                
+                if (this.currentInterview.answerType === 'video' || this.currentInterview.answerType === 'voice') {
+                    this.showInterviewSetup();
+                } else {
+                    this.showInterviewPage();
+                }
+            }
+
+            startQuickPractice() {
+                // Quick practice with random questions
+                const roles = ['Software Engineer', 'Data Scientist', 'Product Manager'];
+                const randomRole = roles[Math.floor(Math.random() * roles.length)];
+                
+                const questions = SmartAI.generateQuestions(randomRole, 'mid', 3, 'general', 'mixed');
+                
+                this.currentInterview = {
+                    id: 'practice_' + Date.now(),
+                    jobRole: randomRole,
+                    experienceLevel: 'mid',
+                    companyType: 'general',
+                    difficultyLevel: 'mixed',
+                    answerType: 'text',
+                    questions: questions.map(q => ({
+                        ...q,
+                        userAnswer: '',
+                        feedback: null,
+                        timeSpent: 0
+                    })),
+                    startedAt: new Date().toISOString(),
+                    overallScore: 0,
+                    isPractice: true
+                };
+
+                this.currentQuestionIndex = 0;
+                this.showInterviewPage();
+            }
+
+            viewResults(interviewId) {
+                const user = this.auth.getCurrentUser();
+                const interview = user.interviews.find(i => i.id === interviewId);
+                if (interview) {
+                    this.currentInterview = interview;
+                    this.showResults();
+                }
+            }
+
+            hideAllPages() {
+                const pages = ['landingPage', 'dashboard', 'interviewSetup', 'interviewPage', 'resultsPage', 'resourceHub', 'analyticsPage', 'pricingPage'];
+                pages.forEach(pageId => {
+                    document.getElementById(pageId).classList.add('hidden');
+                });
+            }
+        }
+
+        // Initialize the application
+        const app = new HireVistaApp();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'982b63264408052e',t:'MTc1ODQ3Njg0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
