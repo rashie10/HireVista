@@ -29,12 +29,4 @@ Whether you’re preparing for tech interviews, HR rounds, or company-specific r
 |-----------|----------|--------|-----------|----------|
 | HTML, CSS, JavaScript / React | Node.js / Express / Flask | OpenAI / Gemini / Custom Model | MongoDB / Firebase | Netlify / Vercel / Render |
 
-*(You can edit this table based on your actual stack)*
 
----
-
-## 🚀 Getting Started
-
-### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/yourusername/hirevista.git
